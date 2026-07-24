@@ -6,7 +6,12 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 
-
+class LowSalesDetail(BaseModel):
+    monthly_revenue: float
+    target_revenue: float
+    revenue_growth_rate: float  # Percentage: -0.15 for -15%
+    average_ticket_value: float
+    churn_rate: float = Field(ge=0, le=1) # Between 0 and 1
 
 ronaldo = LowSalesDetail(monthly_revenue = 1000,
                        target_revenue = 1100,
@@ -165,6 +170,17 @@ class BusinessData(BaseModel):
     LowTrafficDetail: LowTrafficDetail
     ManagementDetail: ManagementDetail
     BadReputationDetail: BadReputationDetail
+    
+if __name__ == "__main__":
+    session = DiagxSession([
+        GetLowSales(ronaldo),
+        GetLowTraffic(messi),
+        GetManagement(suarez),
+        GetBadReputation(neymar),
+        ])
+    
+    resultado = session.run_diagnosis()
+    print(resultado)
 
 data_de_prueba = BusinessData(
     LowSalesDetail=ronaldo,      # tu instancia de LowSalesDetail (¿tenías alguna ya creada?)
