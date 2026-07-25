@@ -166,10 +166,10 @@ resultado = session.run_diagnosis()
 print(resultado)
 
 class BusinessData(BaseModel):
-    LowSalesDetail: LowSalesDetail
-    LowTrafficDetail: LowTrafficDetail
-    ManagementDetail: ManagementDetail
-    BadReputationDetail: BadReputationDetail
+    sales: LowSalesDetail
+    traffic: LowTrafficDetail
+    management: ManagementDetail
+    reputation: BadReputationDetail
     
 if __name__ == "__main__":
     session = DiagxSession([
@@ -183,15 +183,19 @@ if __name__ == "__main__":
     print(resultado)
 
 data_de_prueba = BusinessData(
-    LowSalesDetail=ronaldo,      # tu instancia de LowSalesDetail (¿tenías alguna ya creada?)
-    LowTrafficDetail=messi,    # tu instancia de traffic
-    ManagementDetail=suarez,
-    BadReputationDetail=neymar
+    sales=ronaldo,      # tu instancia de LowSalesDetail (¿tenías alguna ya creada?)
+    traffic=messi,    # tu instancia de traffic
+    management=suarez,
+    reputation=neymar
 )
 
 def create_detectors(data) -> list[IssueDetector]:
-    return [GetLowSales(data.LowSalesDetail), GetLowTraffic(data.LowTrafficDetail),GetManagement(data.ManagementDetail), GetBadReputation(data.BadReputationDetail)]
-
+    return [
+        GetLowSales(data.sales),
+        GetLowTraffic(data.traffic),
+        GetManagement(data.management),
+        GetBadReputation(data.reputation),
+    ]
 detectores = create_detectors(data_de_prueba)
 
 # ¿Devolvió 4 elementos, ni más ni menos?
