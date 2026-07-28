@@ -7,6 +7,7 @@ from metodos_solid import LowSalesDetail
 from metodos_solid import LowTrafficDetail
 from metodos_solid import ManagementDetail
 from metodos_solid import BadReputationDetail
+from datetime import datetime
 
 app = FastAPI()
 businesses_db = {}
@@ -50,6 +51,14 @@ def diagnose_business(id: UUID, data: DiagnosisRequest):
     session = DiagxSession(detectors)
     result = session.run_diagnosis()
 
-    diagnostics_db[id] = diagnostics_db.get(id, []) + [result]
+    entry = {"timestamp": datetime.now().isoformat(), "issues": result}
+    diagnostics_db[id] = diagnostics_db.get(id, []) + [entry]
 
     return {"business_id": id, "issues": result}
+
+@app.get("/businesses/{id}/diagnostics")
+def get_diagnostics_history(id: UUID, data: DiagnosisRequest):
+      if id not in businesses_db:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+      return diagnostics_db.get(id, []) 
