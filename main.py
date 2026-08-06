@@ -37,6 +37,11 @@ def create_business(business: BusinessBasic):
 
 @app.get("/businesses/{id}")
 def get_business(id: UUID):
+    if id not in businesses_db:
+        raise HTTPException(status_code=404, detail="Business not found")
+    return businesses_db[id]
+
+def get_business(id: UUID):
     return businesses_db[id]
     
     # tu turno: buscá en businesses_db usando ese id y devolvelo
@@ -62,3 +67,5 @@ def get_diagnostics_history(id: UUID, data: DiagnosisRequest):
         raise HTTPException(status_code=404, detail="Business not found")
     
       return diagnostics_db.get(id, []) 
+  
+  
