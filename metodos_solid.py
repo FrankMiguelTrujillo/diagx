@@ -7,10 +7,10 @@ from uuid import UUID, uuid4
 
 
 class LowSalesDetail(BaseModel):
-    monthly_revenue: float
-    target_revenue: float
-    revenue_growth_rate: float  # Percentage: -0.15 for -15%
-    average_ticket_value: float
+    monthly_revenue: float = Field(ge=0)
+    target_revenue: float = Field(ge=0)
+    revenue_growth_rate: float  = Field(ge=-0.15, le=0.15)
+    average_ticket_value: float = Field(ge=0)
     churn_rate: float = Field(ge=0, le=1) # Between 0 and 1
 
 ronaldo = LowSalesDetail(monthly_revenue = 1000,
@@ -39,9 +39,9 @@ class GetLowSales:
     return issue
 
 class LowTrafficDetail(BaseModel):
-    total_visitors: int
-    conversion_rate: float
-    customer_acquisition_cost: float
+    total_visitors: int  = Field(ge=0)
+    conversion_rate: float = Field(ge=0, le=1)
+    customer_acquisition_cost: float  = Field(ge=0)
     primary_acquisition_channel: str = Field(..., example="Social Media")
     bounce_rate: Optional[float] = None
 
@@ -73,9 +73,9 @@ messi = LowTrafficDetail(total_visitors = 100,
  
 class BadReputationDetail(BaseModel):
     net_promoter_score: int = Field(ge=-100, le=100)
-    percentage_negative_reviews: float
-    refund_request_rate: float
-    sentiment_index: float = Field(description="AI-generated score from 0.0 to 1.0")
+    percentage_negative_reviews: float = Field(ge=0, le=1)
+    refund_request_rate: float = Field(ge=0, le=1)
+    sentiment_index: float = Field(ge=0, le=1, description="AI-generated score from 0.0 to 1.0")
     main_complaint_theme: str = Field(..., example="Slow delivery")
     
 class GetBadReputation:
@@ -104,12 +104,12 @@ neymar = BadReputationDetail(net_promoter_score = -1,
                          main_complaint_theme = "slow delivery")
 
 class ManagementDetail(BaseModel):
-    fixed_operational_costs: float
-    variable_costs: float
-    all_earning: float
+    fixed_operational_costs: float = Field(ge=0)
+    variable_costs: float  = Field(ge=0)
+    all_earning: float  = Field(ge=0)
     inventory_turnover: float
     automation_score: float = Field(ge=0, le=1) # 0 to 1 scale
-    administrative_waste_estimate: float
+    administrative_waste_estimate: float  = Field(ge=0)
     
 class GetManagement:
      def __init__(self, ManagementDetail):
