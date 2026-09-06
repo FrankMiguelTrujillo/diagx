@@ -62,7 +62,7 @@ def diagnose_business(id: UUID, data: DiagnosisRequest):
     return {"business_id": id, "issues": result}
 
 @app.get("/businesses/{id}/diagnostics")
-def get_diagnostics_history(id: UUID, data: DiagnosisRequest):
+def get_diagnostics_history(id: UUID):
       if id not in businesses_db:
         raise HTTPException(status_code=404, detail="Business not found")
     
