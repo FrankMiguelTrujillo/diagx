@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 import models
 
+#3fa85f64-5717-4562-b3fc-2c963f66afa6
+
 def get_db():
     db = SessionLocal()
     try:
@@ -51,11 +53,13 @@ def create_business(business: BusinessBasic, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_business)
     return db_business
+
 @app.get("/businesses/{id}")
-def get_business(id: UUID):
-    if id not in businesses_db:
+def get_business(id: UUID, db: Session = Depends(get_db)):
+    business = db.query(models.Business).filter(models.Business.id == id).first()
+    if business is None:
         raise HTTPException(status_code=404, detail="Business not found")
-    return businesses_db[id]
+    return business
 
 def get_business(id: UUID):
     return businesses_db[id]
@@ -64,18 +68,20 @@ def get_business(id: UUID):
 
 
 @app.post("/businesses/{id}/diagnose")
-def diagnose_business(id: UUID, data: DiagnosisRequest):
-    if id not in businesses_db:
-        raise HTTPException(status_code=404, detail="Business not found")
-
+def diagnose_business(id: UUID, data: DiagnosisRequest, db: Session = Depends(get_db)):
+    business = db.query(models.Business).filter(models.Business.id == id).first()
+    if business is None:
+            raise HTTPException(status_code=404, detail="Business not found")
     detectors = create_detectors(data)
     session = DiagxSession(detectors)
     result = session.run_diagnosis()
 
-    entry = {"timestamp": datetime.now().isoformat(), "issues": result}
-    diagnostics_db[id] = diagnostics_db.get(id, []) + [entry]
+    db_diagnostic = models.Diagnostic(business_id= id, issues= result)
+    db.add(db_diagnostic)
+    db.commit()
+    db.refresh(db_diagnostic)
 
-    return {"business_id": id, "issues": result}
+    return {"diagnostic_id": id, "issues": result}
 
 @app.get("/businesses/{id}/diagnostics")
 def get_diagnostics_history(id: UUID):
