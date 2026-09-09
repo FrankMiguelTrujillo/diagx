@@ -81,12 +81,13 @@ def diagnose_business(id: UUID, data: DiagnosisRequest, db: Session = Depends(ge
     db.commit()
     db.refresh(db_diagnostic)
 
-    return {"diagnostic_id": id, "issues": result}
+    return {"diagnostic_id": db_diagnostic.id, "issues": result}
 
 @app.get("/businesses/{id}/diagnostics")
-def get_diagnostics_history(id: UUID):
-      if id not in businesses_db:
-        raise HTTPException(status_code=404, detail="Business not found")
+def get_diagnostics_history(id: UUID, db: Session = Depends(get_db)):
+      business = db.query(models.Business).filter(models.Business.id == id).first()
+      if business is None:
+            raise HTTPException(status_code=404, detail="Business not found")
     
-      return diagnostics_db.get(id, []) 
+      return db.query(models.Diagnostic).filter(models.Diagnostic.business_id == id).all()
   
