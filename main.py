@@ -11,8 +11,10 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from database import SessionLocal
 import models
+import redis
+import json
 
-#3fa85f64-5717-4562-b3fc-2c963f66afa6
+redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
 
 def get_db():
     db = SessionLocal()
@@ -56,10 +58,25 @@ def create_business(business: BusinessBasic, db: Session = Depends(get_db)):
 
 @app.get("/businesses/{id}")
 def get_business(id: UUID, db: Session = Depends(get_db)):
+    cache_key = f"business:{id}"
+    cached = redis_client.get(cache_key)
+    if cached:
+        return json.loads(cached)
+
     business = db.query(models.Business).filter(models.Business.id == id).first()
     if business is None:
         raise HTTPException(status_code=404, detail="Business not found")
-    return business
+
+    business_dict = {
+        "id": str(business.id),
+        "name": business.name,
+        "sector": business.sector,
+        "monthly_revenue": business.monthly_revenue
+    }
+    redis_client.set(cache_key, json.dumps(business_dict), ex=3600)
+    print(f"Guardando en cache: {cache_key}")
+    redis_client.set(cache_key, json.dumps(business_dict), ex=3600)
+    return business_dict
 
 def get_business(id: UUID):
     return businesses_db[id]
