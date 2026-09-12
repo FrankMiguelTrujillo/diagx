@@ -73,8 +73,7 @@ def get_business(id: UUID, db: Session = Depends(get_db)):
         "sector": business.sector,
         "monthly_revenue": business.monthly_revenue
     }
-    redis_client.set(cache_key, json.dumps(business_dict), ex=3600)
-    print(f"Guardando en cache: {cache_key}")
+    
     redis_client.set(cache_key, json.dumps(business_dict), ex=3600)
     return business_dict
 
