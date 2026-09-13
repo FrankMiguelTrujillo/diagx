@@ -37,3 +37,9 @@ Un archivo con el mismo nombre que una librería (ej. fastapi.py) puede tapar la
 Si algo no actualiza después de corregirlo, borrá la carpeta __pycache__ y probá de nuevo.
 
 Postgres local (Docker): usuario=postgres, password=diagx123, db=diagx, puerto=5432
+
+## Redis (Docker)
+docker run --name diagx-redis -p 6379:6379 -d redis
+docker exec -it diagx-redis redis-cli get <clave>
+docker start diagx-redis
+docker stop diagx-redis
