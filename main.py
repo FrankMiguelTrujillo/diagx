@@ -13,7 +13,16 @@ from database import SessionLocal
 import models
 import redis
 import json
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+redis_client = redis.Redis(
+    host=os.getenv("REDIS_HOST"),
+    port=int(os.getenv("REDIS_PORT")),
+    decode_responses=True
+)
 redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
 
 def get_db():
