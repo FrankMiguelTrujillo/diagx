@@ -7,4 +7,6 @@ print(f"tipos de datos: {df.info()}")
 print(df.isnull().sum().sort_values(ascending=False))# tipos de datos, valores nulos por columna
 umbral = 0.3 * len(df)
 df_limpio = df.dropna(axis=1, thresh=len(df) - umbral)
+df_limpio = df_limpio.fillna(df_limpio.median(numeric_only=True))
+print(df_limpio.isnull().sum().sum())
 print(df_limpio)
