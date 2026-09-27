@@ -1,11 +1,19 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("data/nonbankrupt_retail_16_year_13_14_15.csv", sep=";", decimal=",") 
 dr = pd.read_csv("data/bankrupt_retail_16_year_13_14_15.csv", sep=";", decimal=",") 
 df_bankrupt = dr  # tu dataset de empresas quebradas
 df_nonbankrupt = df  # tu dataset de empresas no quebradas
 
+df_bankrupt = dr
+df_nonbankrupt = df
+
+df_bankrupt["target"] = 1
+df_nonbankrupt["target"] = 0
+
 df_completo = pd.concat([df_bankrupt, df_nonbankrupt], ignore_index=True)
+
 
 print(f"cuantas filas y columnas tiene?: {df.shape}")        # ¿cuántas filas y columnas tiene?
 print(f"primeras filas: {df.head()}")       # las primeras filas, para ver cómo se ven los datos
@@ -30,6 +38,12 @@ print(df_completo.shape)
 umbral = 0.3 * len(df_completo)
 df_final = df_completo.dropna(axis=1, thresh=len(df_completo) - umbral)
 print(df_final.shape)
-
+print(df_final.columns.tolist())
+X = df_final.drop(columns=["target", "Unnamed: 0"])
+y = df_final["target"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 df_final = df_final.fillna(df_final.median(numeric_only=True))
 print(df_final.isnull().sum().sum())
+
+print(X_train.shape, X_test.shape)
+print(df_final.columns.tolist())
