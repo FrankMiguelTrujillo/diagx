@@ -15,7 +15,14 @@ import redis
 import json
 import os
 from dotenv import load_dotenv
+import joblib
 
+modelo = joblib.load("modelo_quiebra.pkl")
+scaler = joblib.load("scaler_quiebra.pkl")
+# datos_nuevos = DataFrame con las mismas 53 columnas de X (mismo orden, mismos nombres)
+datos_escalados = scaler.transform(datos_nuevos)  # transform, NUNCA fit
+prediccion = modelo.predict(datos_escalados)
+probabilidad = modelo.predict_proba(datos_escalados)  # útil para dar un % de riesgo, no solo 0/1
 load_dotenv()
 
 redis_client = redis.Redis(

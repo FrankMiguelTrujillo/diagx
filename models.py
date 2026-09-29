@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, create_model
 from typing import Optional
 from sqlalchemy import Column, String, Float, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSON
@@ -6,7 +6,42 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 import uuid
 from database import Base
+from fastapi import FastAPI
+import joblib
+import json
+from fastapi import FastAPI
+from pydantic import create_model
+import joblib
+import json
 
+app = FastAPI()
+
+# Cargar modelo, scaler y columnas (una sola vez, al arrancar la API)
+modelo = joblib.load("modelo_quiebra.pkl")
+scaler = joblib.load("scaler_quiebra.pkl")
+
+with open("columnas_modelo.json") as f:
+    columnas = json.load(f)
+
+# Generar el schema de entrada dinámicamente
+campos = {col: (float, ...) for col in columnas}
+EmpresaInput = create_model("EmpresaInput", **campos)
+
+
+@app.post("/predict")
+def predecir_quiebra(datos: EmpresaInput): # type: ignore
+    # Convertir el input de Pydantic a lista, en el mismo orden que columnas
+    valores = [[getattr(datos, col) for col in columnas]]
+
+    valores_escalados = scaler.transform(valores)
+
+    prediccion = modelo.predict(valores_escalados)[0]
+    probabilidad = modelo.predict_proba(valores_escalados)[0][1]  # prob. de clase 1 (quiebra)
+
+    return {
+        "riesgo_quiebra": bool(prediccion),
+        "probabilidad": round(float(probabilidad), 4)
+    }
 class Business(Base):
     __tablename__ = "businesses"
 
