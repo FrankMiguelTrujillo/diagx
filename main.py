@@ -17,12 +17,19 @@ import os
 from dotenv import load_dotenv
 import joblib
 
-modelo = joblib.load("modelo_quiebra.pkl")
-scaler = joblib.load("scaler_quiebra.pkl")
-# datos_nuevos = DataFrame con las mismas 53 columnas de X (mismo orden, mismos nombres)
-datos_escalados = scaler.transform(datos_nuevos)  # transform, NUNCA fit
-prediccion = modelo.predict(datos_escalados)
-probabilidad = modelo.predict_proba(datos_escalados)  # útil para dar un % de riesgo, no solo 0/1
+from pathlib import Path
+from pydantic import create_model
+
+BASE_DIR = Path(__file__).resolve().parent
+
+modelo = joblib.load(BASE_DIR / "modelo_quiebra.pkl")
+scaler = joblib.load(BASE_DIR / "scaler_quiebra.pkl")
+with open(BASE_DIR / "columnas_modelo.json") as f:
+    columnas = json.load(f)
+
+campos = {col: (float, ...) for col in columnas}
+EmpresaInput = create_model("EmpresaInput", **campos)
+
 load_dotenv()
 
 redis_client = redis.Redis(
@@ -30,7 +37,6 @@ redis_client = redis.Redis(
     port=int(os.getenv("REDIS_PORT")),
     decode_responses=True
 )
-redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
 
 def get_db():
     db = SessionLocal()
@@ -42,6 +48,15 @@ def get_db():
 app = FastAPI()
 businesses_db = {}
 diagnostics_db = {}
+
+
+@app.post("/predict")
+def predecir_quiebra(datos: EmpresaInput):  # type: ignore
+    valores = [[getattr(datos, col) for col in columnas]]
+    valores_escalados = scaler.transform(valores)
+    prediccion = modelo.predict(valores_escalados)[0]
+    probabilidad = modelo.predict_proba(valores_escalados)[0][1]
+    return {"riesgo_quiebra": bool(prediccion), "probabilidad": round(float(probabilidad), 4)}
 
 class DiagnosisRequest(BaseModel):
     sales: LowSalesDetail

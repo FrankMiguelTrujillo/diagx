@@ -53,3 +53,8 @@ print(confusion_matrix(y_test, y_pred))
 
 joblib.dump(modelo, "modelo_quiebra.pkl")
 joblib.dump(scaler, "scaler_quiebra.pkl")
+
+import json
+
+with open("columnas_modelo.json", "w") as f:
+    json.dump(X_train.columns.tolist(), f)
