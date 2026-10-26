@@ -7,9 +7,11 @@
 - [x] Usuario IAM para el trabajo diario (no usar el raiz)
 - [x] EC2 con Docker y Docker Compose
 - [x] Desplegar API + Postgres + Redis con docker-compose.yml
-- [ ] Secretos reales (no usar diagx123 en produccion)
+- [x] Secretos reales (contraseña de Postgres en .env del servidor)
+- [x] Postgres y Redis accesibles solo desde localhost
+- [x] Script de deploy (deploy.sh)
 - [ ] IP fija (Elastic IP)
-- [ ] Deploy automatico desde GitHub Actions
+- [ ] Deploy automático desde GitHub Actions
 
 ## Arquitectura actual
 Una instancia EC2 t4g.small (Ubuntu, ARM) en us-east-1, corriendo la API,
