@@ -32,8 +32,8 @@ class Diagnostic(Base):
 # 1. THE SCHEMAS (Previously models.py)
 # =====================================================================
 class BusinessMetrics(BaseModel):
-    company_name: str = Field(..., example="Acme Carpentry")
-    industry: str = Field(..., example="Manufacturing")
+    company_name: str = Field(..., examples="Acme Carpentry")
+    industry: str = Field(..., examples="Manufacturing")
     monthly_revenue: float = Field(..., gt=0, description="Monthly revenue in USD or COP")
     operational_costs: float = Field(..., ge=0)
     employee_count: int = Field(..., gt=0)
