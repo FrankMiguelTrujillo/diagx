@@ -1,3 +1,15 @@
+variable "api_port" {
+  description = "Puerto en el que escucha la API"
+  type        = number
+  default     = 8000
+}
+
+variable "aws_region" {
+  description = "Region de AWS"
+  type        = string
+  default     = "us-east-1"
+}
+
 terraform {
   required_providers {
     aws = {
@@ -7,8 +19,8 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = "us-east-1"
+ provider  "aws" {
+  region = var.aws_region
 }
 
 resource "aws_security_group" "diagx_api" {
@@ -17,8 +29,8 @@ resource "aws_security_group" "diagx_api" {
 
   ingress {
     description = "API de Diagx"
-    from_port   = 8000
-    to_port     = 8000
+    from_port   = var.api_port
+    to_port     = var.api_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
