@@ -42,7 +42,7 @@ class LowTrafficDetail(BaseModel):
     total_visitors: int  = Field(ge=0)
     conversion_rate: float = Field(ge=0, le=1)
     customer_acquisition_cost: float  = Field(ge=0)
-    primary_acquisition_channel: str = Field(..., example="Social Media")
+    primary_acquisition_channel: str = Field(..., examples=["Social Media"])
     bounce_rate: Optional[float] = None
 
 class GetLowTraffic:
@@ -76,7 +76,7 @@ class BadReputationDetail(BaseModel):
     percentage_negative_reviews: float = Field(ge=0, le=1)
     refund_request_rate: float = Field(ge=0, le=1)
     sentiment_index: float = Field(ge=0, le=1, description="AI-generated score from 0.0 to 1.0")
-    main_complaint_theme: str = Field(..., example="Slow delivery")
+    main_complaint_theme: str = Field(..., examples=["Slow delivery"])
     
 class GetBadReputation:
      def __init__(self, BadReputationDetail):
