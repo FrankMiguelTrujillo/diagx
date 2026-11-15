@@ -42,3 +42,36 @@ resource "aws_security_group" "diagx_api" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+variable "instance_type" {
+  description = "Tipo de instancia EC2"
+  type        = string
+  default     = "t4g.micro"
+}
+
+# Busca la imagen de Ubuntu ARM mas reciente publicada por Canonical
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-*"]
+  }
+}
+
+resource "aws_instance" "diagx_tf" {
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = var.instance_type
+  key_name               = "diagx-key"
+  vpc_security_group_ids = [aws_security_group.diagx_api.id]
+
+  tags = {
+    Name = "diagx-tf"
+  }
+}
+
+output "public_ip" {
+  description = "IP publica de la instancia"
+  value       = aws_instance.diagx_tf.public_ip
+}
