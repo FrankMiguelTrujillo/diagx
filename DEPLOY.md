@@ -21,3 +21,23 @@ Postgres y Redis con Docker Compose. Solo estan abiertos los puertos
 ## Notas
 - Nunca subir claves de AWS, la llave .pem ni el archivo .env al repositorio.
 - Detener la instancia cuando no se este usando.
+
+## Despliegue de Diagx en AWS
+
+## Estado
+- [x] Cuenta de AWS, MFA en el usuario raiz y alerta de presupuesto
+- [x] Usuario IAM para el trabajo diario
+- [x] EC2 (t4g.small, Ubuntu ARM) con Docker y Docker Compose
+- [x] API + Postgres + Redis desplegados con docker-compose.yml
+- [x] Contrasena de Postgres en .env del servidor (fuera de GitHub)
+- [x] Postgres y Redis accesibles solo desde localhost
+- [x] Reinicio automatico de contenedores (restart: unless-stopped)
+- [x] Script de deploy (deploy.sh)
+- [x] Infraestructura basica con Terraform (infra/)
+- [x] Monitoreo: dashboard de CloudWatch y alarma por correo (SNS)
+- [ ] IP fija (Elastic IP)
+- [ ] Deploy automatico desde GitHub Actions
+
+## Prueba de carga
+ApacheBench desde el propio servidor, 5000 peticiones con 20 concurrentes:
+~235 peticiones por segundo, 85 ms en promedio, 0 fallos.
