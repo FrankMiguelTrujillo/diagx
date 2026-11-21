@@ -58,11 +58,10 @@ class Insumo:
 
 
 # Prueba rápida
-if __name__ == "__main__":
-    harina = Insumo(1, "Harina", "gramos", 1000, 200)
-    harina.agregar_existencia(500)            # 1500
-    print(harina.descontar_existencia(1400))  # True  -> quedan 100
-    print(harina.descontar_existencia(500))   # False -> siguen 100
-    print(harina.necesita_reposicion())       # True  (100 <= 200)
-    harina.inactivar()
-    print(harina.get_estado())                # Inactivo
+harina = Insumo(1, "Harina", "gramos", 1000, 200)
+harina.agregar_existencia(500)            # 1500
+print(harina.descontar_existencia(1400))  # True  -> quedan 100
+print(harina.descontar_existencia(500))   # False -> siguen 100
+print(harina.necesita_reposicion())       # True  (100 <= 200)
+harina.inactivar()
+print(harina.get_estado())                # Inactivo

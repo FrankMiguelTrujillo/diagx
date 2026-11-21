@@ -1,7 +1,5 @@
 import numpy as np
 
-from insumo import Insumo
-
 
 class Producto:
     """Producto que se vende (pizza, bebida) con su receta de insumos."""
@@ -100,18 +98,17 @@ class Producto:
 
 
 # Prueba
-if __name__ == "__main__":
-    harina = Insumo(1, "Harina", "gramos", 5000, 1000)
-    queso = Insumo(2, "Queso mozzarella", "gramos", 3000, 500)
-    salsa = Insumo(3, "Salsa de tomate", "ml", 2000, 400)
+harina = Insumo(1, "Harina", "gramos", 5000, 1000)
+queso = Insumo(2, "Queso mozzarella", "gramos", 3000, 500)
+salsa = Insumo(3, "Salsa de tomate", "ml", 2000, 400)
 
-    pizza = Producto(1, "Pizza Margarita", "Pizza", 28000)
-    pizza.agregar_insumo_receta(harina, 250)
-    pizza.agregar_insumo_receta(queso, 150)
-    pizza.agregar_insumo_receta(salsa, 80)
-    pizza.agregar_insumo_receta(queso, -5)        # debe rechazarse
+pizza = Producto(1, "Pizza Margarita", "Pizza", 28000)
+pizza.agregar_insumo_receta(harina, 250)
+pizza.agregar_insumo_receta(queso, 150)
+pizza.agregar_insumo_receta(salsa, 80)
+pizza.agregar_insumo_receta(queso, -5)        # debe rechazarse
 
-    pizza.mostrar_receta()
+pizza.mostrar_receta()
 
-    pizza.set_precio(-1000)                        # debe rechazarse
-    print(pizza.get_precio())                      # 28000
+pizza.set_precio(-1000)                        # debe rechazarse
+print(pizza.get_precio())                      # 28000
