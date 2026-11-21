@@ -58,7 +58,10 @@ class Inventario:
 
         for i in range(producto.get_cont_receta()):
             necesario = cantidades[i] * cantidad
-            if insumos[i].get_cantidad_disponible() < necesario:
+            if insumos[i].get_estado() == "Inactivo":
+                print(f"{insumos[i].get_nombre()} está inactivo, no está disponible.")
+                disponible = False
+            elif insumos[i].get_cantidad_disponible() < necesario:
                 print(f"No alcanza {insumos[i].get_nombre()}: se necesitan {necesario:g} "
                       f"{insumos[i].get_unidad()} y hay {insumos[i].get_cantidad_disponible():g}")
                 disponible = False
