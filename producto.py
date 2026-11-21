@@ -9,9 +9,14 @@ class Producto:
     # 1. Constructor
     def __init__(self, id_producto, nombre, categoria, precio):
         self.__id_producto = id_producto
-        self.__nombre = nombre
-        self.__categoria = categoria            # "Pizza" o "Bebida"
-        self.__precio = precio
+        # Se inicializan vacíos y se asignan con los setters,
+        # así el constructor también valida.
+        self.__nombre = ""
+        self.__categoria = ""
+        self.__precio = 0
+        self.set_nombre(nombre)
+        self.set_categoria(categoria)           # "Pizza" o "Bebida"
+        self.set_precio(precio)
         self.__estado = "Activo"
 
         # Receta: dos vectores paralelos + contador.
@@ -66,7 +71,10 @@ class Producto:
             self.__nombre = nombre
 
     def set_categoria(self, categoria):
-        self.__categoria = categoria
+        if categoria == "Pizza" or categoria == "Bebida":
+            self.__categoria = categoria
+        else:
+            print("Categoría inválida: debe ser 'Pizza' o 'Bebida'.")
 
     def set_precio(self, precio):
         if precio > 0:
@@ -76,10 +84,22 @@ class Producto:
 
     # 3. Agrega un insumo a la receta en la siguiente posición libre
     def agregar_insumo_receta(self, insumo, cantidad):
-        if self.__cont_receta >= Producto.MAX_RECETA:
-            print("La receta está llena, no se puede agregar más insumos.")
-        elif cantidad <= 0:
+        if cantidad <= 0:
             print("Cantidad inválida: debe ser positiva.")
+            return
+
+        # Buscar si el insumo ya está en la receta (comparando ids)
+        posicion = -1
+        for i in range(self.__cont_receta):
+            if self.__insumos_receta[i].get_id_insumo() == insumo.get_id_insumo():
+                posicion = i
+
+        if posicion != -1:
+            # Ya estaba: se suma la cantidad en vez de repetirlo
+            self.__cantidades_receta[posicion] += cantidad
+            print(f"{insumo.get_nombre()} ya estaba en la receta, se sumó la cantidad.")
+        elif self.__cont_receta >= Producto.MAX_RECETA:
+            print("La receta está llena, no se puede agregar más insumos.")
         else:
             self.__insumos_receta[self.__cont_receta] = insumo   # guarda el OBJETO
             self.__cantidades_receta[self.__cont_receta] = cantidad
