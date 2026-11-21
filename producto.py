@@ -51,7 +51,18 @@ class Producto:
     # 2. Setters
     def set_nombre(self, nombre):
         # El nombre no puede estar vacío ni tener números
-        if nombre.strip() == "" or any(c.isdigit() for c in nombre):
+        digitos = "0123456789"
+        tiene_texto = False      # ¿hay al menos un carácter que no sea espacio?
+        tiene_numero = False     # ¿hay algún dígito?
+
+        for c in nombre:
+            if c != " ":
+                tiene_texto = True
+            for d in digitos:
+                if c == d:
+                    tiene_numero = True
+
+        if tiene_texto == False or tiene_numero == True:
             print("Nombre inválido: no puede estar vacío ni contener números.")
         else:
             self.__nombre = nombre
